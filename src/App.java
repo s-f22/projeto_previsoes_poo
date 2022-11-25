@@ -1,9 +1,12 @@
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import javax.swing.JFrame;
+import java.awt.GridLayout;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import model.Previsao;
 import service.PrevisaoService;
@@ -19,21 +22,66 @@ public class App {
         final String ORACLE_CLOUD_DATABASE = properties.getProperty("ORACLE_CLOUD_DATABASE");
 
         PrevisaoService service = new PrevisaoService();
-
-        // Previsao p = new Previsao("Ilheus");
-        // service.armazenarPrevisaoNoHistoricoOracleCloud(p, ORACLE_CLOUD_DATABASE);
-
-        List <Previsao> listaPrevisoes = service.obterPrevisoesWeatherMap(
-        WEATHER_MAP_BASEURL,
-        WEATHER_MAP_APPID,
-        "Juazeiro",
-        WEATHER_MAP_UNITS);
-
-        int opcao = Integer.parseInt(JOptionPane.showInputDialog("Digite a opcao desejada: \n 1-Consultar Previsao\n2-Consultar Historico\n"));
-
         
+        //*Lista de opcoes */
+        final String action = JOptionPane.showInputDialog("O que quer fazer?\n[1] - Pesquisar previsão\n[2] - Historico de previsões\n[3] - Sair");
 
+        var cityName = "";
+        List<Previsao> previsoesResultado = new ArrayList<>();
+
+        switch(action) {
+            case "1":
+                cityName = JOptionPane.showInputDialog(null, "Qual cidade quer pesquisar?", "PREVISOES", 3);
+                previsoesResultado = service.obterPrevisoesWeatherMap(WEATHER_MAP_BASEURL, WEATHER_MAP_APPID, cityName, WEATHER_MAP_UNITS);
+                Previsao p = new Previsao(cityName);
+                service.armazenarPrevisaoNoHistoricoOracleCloud(p, ORACLE_CLOUD_DATABASE);
+                break;
+            case "2":
+                
+                break;
+            case "3":
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Opção inválida");
+                break;
+        }
+
+        //*Inicio da Tabela JOptionPane */
+        JDialog dialog = null;
+        JOptionPane optionPane = new JOptionPane();
+        optionPane.setMessage("PREVISÕES");
+        optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(40, 4));
+        Previsao[] previsoes = new Previsao[previsoesResultado.size()];
+
+        JLabel[] label = new JLabel[previsoes.length];
+        for (int i = 0; i < previsoes.length; i++) {
+            label[i] = new JLabel(
+                    "Tem. Mín:  " + String.valueOf(previsoesResultado.get(i).getTemperaturaMinima()) + "ºC");
+            label[i].setBounds(20, 15, 100, 30);
+            panel.add(label[i]);
+            label[i] = new JLabel(
+                    "Tem. Máx:  " + String.valueOf(previsoesResultado.get(i).getTemperaturaMaxima()) + "ºC");
+            label[i].setBounds(50, 15, 100, 20);
+            panel.add(label[i]);
+            label[i] = new JLabel("Cidade:  " + previsoesResultado.get(i).getCidade());
+            label[i].setBounds(80, 15, 100, 20);
+            panel.add(label[i]);
+            label[i] = new JLabel("Data:  " + previsoesResultado.get(i).getData());
+            label[i].setBounds(110, 15, 100, 20);
+            panel.add(label[i]);
+        }
         
+        Object[] options = {};
+        optionPane.setOptions(options);
+        optionPane.setOptionType(JOptionPane.DEFAULT_OPTION);
+        optionPane.add(panel);
+        dialog = optionPane.createDialog(null, "Resultado da Pesquisa");
+        dialog.setVisible(true);
 
+        //*Fim da Tabela JOptionPane */
     }
 }
