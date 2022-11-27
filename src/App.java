@@ -8,7 +8,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 import model.HistoricoPrevisao;
 import model.Previsao;
@@ -27,53 +26,53 @@ public class App {
         PrevisaoService service = new PrevisaoService();
 
         // *Lista de opcoes */
-        final String action = JOptionPane.showInputDialog(
+        final String opcao = JOptionPane.showInputDialog(
                 "O que quer fazer?\n[1] - Pesquisar previsão\n[2] - Historico de previsões\n[3] - Sair");
 
         var cityName = "";
-        List<Previsao> previsoesResultado = new ArrayList<>();
-        List<HistoricoPrevisao> getOracle = new ArrayList<>();
+        List<Previsao> resultadoOpenWeatherMAp = new ArrayList<>();
+        List<HistoricoPrevisao> resultadoOracle = new ArrayList<>();
 
-        switch (action) {
+        switch (opcao) {
             case "1":
                 cityName = JOptionPane.showInputDialog(null, "Qual cidade quer pesquisar?", "PREVISOES", 3);
-                previsoesResultado = service.obterPrevisoesWeatherMap(WEATHER_MAP_BASEURL, WEATHER_MAP_APPID, cityName,
+                resultadoOpenWeatherMAp = service.obterPrevisoesWeatherMap(WEATHER_MAP_BASEURL, WEATHER_MAP_APPID, cityName,
                         WEATHER_MAP_UNITS);
 
                 // *Inicio da Tabela JOptionPane Pesquisa*/
-                JDialog dialog = null;
-                JOptionPane optionPane = new JOptionPane();
-                optionPane.setMessage("PREVISÕES");
-                optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+                JDialog dialogPesquisa = null;
+                JOptionPane optionPanePesquisa = new JOptionPane();
+                optionPanePesquisa.setMessage("PREVISÕES");
+                optionPanePesquisa.setMessageType(JOptionPane.INFORMATION_MESSAGE);
 
-                JPanel panel = new JPanel();
-                panel.setLayout(new GridLayout(40, 4));
-                Previsao[] previsoes = new Previsao[previsoesResultado.size()];
+                JPanel panelPesquisa = new JPanel();
+                panelPesquisa.setLayout(new GridLayout(40, 4));
+                Previsao[] previsoes = new Previsao[resultadoOpenWeatherMAp.size()];
 
-                JLabel[] label = new JLabel[previsoes.length];
+                JLabel[] labelPesquisa = new JLabel[previsoes.length];
                 for (int i = 0; i < previsoes.length; i++) {
-                    label[i] = new JLabel(
-                            "Tem. Mín:  " + String.valueOf(previsoesResultado.get(i).getTemperaturaMinima()) + "ºC");
-                    label[i].setBounds(20, 15, 100, 20);
-                    panel.add(label[i]);
-                    label[i] = new JLabel(
-                            "Tem. Máx:  " + String.valueOf(previsoesResultado.get(i).getTemperaturaMaxima()) + "ºC");
-                    label[i].setBounds(50, 15, 100, 20);
-                    panel.add(label[i]);
-                    label[i] = new JLabel("Cidade:  " + previsoesResultado.get(i).getCidade());
-                    label[i].setBounds(80, 15, 100, 20);
-                    panel.add(label[i]);
-                    label[i] = new JLabel("Data:  " + previsoesResultado.get(i).getData());
-                    label[i].setBounds(110, 15, 100, 20);
-                    panel.add(label[i]);
+                    labelPesquisa[i] = new JLabel(
+                            "Tem. Mín:  " + String.valueOf(resultadoOpenWeatherMAp.get(i).getTemperaturaMinima()) + "ºC");
+                    labelPesquisa[i].setBounds(20, 15, 100, 20);
+                    panelPesquisa.add(labelPesquisa[i]);
+                    labelPesquisa[i] = new JLabel(
+                            "Tem. Máx:  " + String.valueOf(resultadoOpenWeatherMAp.get(i).getTemperaturaMaxima()) + "ºC");
+                    labelPesquisa[i].setBounds(50, 15, 100, 20);
+                    panelPesquisa.add(labelPesquisa[i]);
+                    labelPesquisa[i] = new JLabel("Cidade:  " + resultadoOpenWeatherMAp.get(i).getCidade());
+                    labelPesquisa[i].setBounds(80, 15, 100, 20);
+                    panelPesquisa.add(labelPesquisa[i]);
+                    labelPesquisa[i] = new JLabel("Data:  " + resultadoOpenWeatherMAp.get(i).getData());
+                    labelPesquisa[i].setBounds(110, 15, 100, 20);
+                    panelPesquisa.add(labelPesquisa[i]);
                 }
 
-                Object[] options = {};
-                optionPane.setOptions(options);
-                optionPane.setOptionType(JOptionPane.DEFAULT_OPTION);
-                optionPane.add(panel);
-                dialog = optionPane.createDialog(null, "Resultado da Pesquisa");
-                dialog.setVisible(true);
+                Object[] optionsPesquisa = {};
+                optionPanePesquisa.setOptions(optionsPesquisa);
+                optionPanePesquisa.setOptionType(JOptionPane.DEFAULT_OPTION);
+                optionPanePesquisa.add(panelPesquisa);
+                dialogPesquisa = optionPanePesquisa.createDialog(null, "Resultado da Pesquisa");
+                dialogPesquisa.setVisible(true);
                 // *Fim da Tabela JOptionPane Pesquisa*/
 
                 Previsao p = new Previsao(cityName);
@@ -81,36 +80,34 @@ public class App {
                 break;
 
             case "2":
-                getOracle = service.resgatarDadosDoBancoOracle(ORACLE_CLOUD_DATABASE);
+                resultadoOracle = service.resgatarDadosDoBancoOracle(ORACLE_CLOUD_DATABASE);
 
                 // *Inicio da Tabela JOptionPane Histórico*/
-                JDialog dialoG = null;
-                JOptionPane optionPanE = new JOptionPane();
-                optionPanE.setMessage("HISTÓRICO");
-                optionPanE.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+                JDialog dialogHistorico = null;
+                JOptionPane optionPaneHistorico = new JOptionPane();
+                optionPaneHistorico.setMessage("HISTÓRICO");
+                optionPaneHistorico.setMessageType(JOptionPane.INFORMATION_MESSAGE);
 
-                HistoricoPrevisao[] historico = new HistoricoPrevisao[getOracle.size()];
+                HistoricoPrevisao[] historico = new HistoricoPrevisao[resultadoOracle.size()];
 
-                JPanel paneL = new JPanel();
-                paneL.setLayout(new GridLayout(historico.length, 2));
+                JPanel panelHistorico = new JPanel();
+                panelHistorico.setLayout(new GridLayout(historico.length, 2));
 
-                JLabel[] labeL = new JLabel[historico.length];
+                JLabel[] labelHistorico = new JLabel[historico.length];
                 for (int i = 0; i < historico.length; i++) {
-                    labeL[i] = new JLabel("   "+"Data:  " + getOracle.get(i).getData() + "    ");
-                    // labeL[i].setBounds(0, 15, 50, 20);
-                    labeL[i].setPreferredSize(new Dimension(100,15));
-                    paneL.add(labeL[i]);
-                    labeL[i] = new JLabel("Cidade:  " + getOracle.get(i).getCidade());
-                    labeL[i].setPreferredSize(new Dimension(100,15));
-                    // labeL[i].setBounds(0, 15, 50, 20);
-                    paneL.add(labeL[i]);
+                    labelHistorico[i] = new JLabel("     "+"Data:  " + resultadoOracle.get(i).getData() + "    ");
+                    labelHistorico[i].setPreferredSize(new Dimension(170,15));
+                    panelHistorico.add(labelHistorico[i]);
+                    labelHistorico[i] = new JLabel("     "+"     "+"Cidade:  " + resultadoOracle.get(i).getCidade());
+                    labelHistorico[i].setPreferredSize(new Dimension(50,15));
+                    panelHistorico.add(labelHistorico[i]);
                 }
-                Object[] optionS = {};
-                optionPanE.setOptions(optionS);
-                optionPanE.setOptionType(JOptionPane.DEFAULT_OPTION);
-                optionPanE.add(paneL);
-                dialoG = optionPanE.createDialog(null, "Histórico de Pesquisa");
-                dialoG.setVisible(true);
+                Object[] optionsHistorico = {};
+                optionPaneHistorico.setOptions(optionsHistorico);
+                optionPaneHistorico.setOptionType(JOptionPane.DEFAULT_OPTION);
+                optionPaneHistorico.add(panelHistorico);
+                dialogHistorico = optionPaneHistorico.createDialog(null, "Histórico de Pesquisa");
+                dialogHistorico.setVisible(true);
                 // *Fim da Tabela JOptionPane historico*/
                 break;
 

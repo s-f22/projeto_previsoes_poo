@@ -34,7 +34,7 @@ public class PrevisaoService {
     System.out.println(pJOSN);
   }
 
-  public  List<HistoricoPrevisao> resgatarDadosDoBancoOracle(String oracle) throws Exception {
+  public List<HistoricoPrevisao> resgatarDadosDoBancoOracle(String oracle) throws Exception {
     HttpRequest req = HttpRequest.newBuilder()
         .GET()
         .uri(URI.create(oracle))
@@ -43,7 +43,7 @@ public class PrevisaoService {
     var response = cliente.send(req, BodyHandlers.ofString());
     JSONObject raiz = new JSONObject(response.body());
     JSONArray items = raiz.getJSONArray("items");
-    
+
     List<HistoricoPrevisao> listaPrevisoes = new ArrayList<>();
 
     for (int i = 0; i < items.length(); i++) {
@@ -58,11 +58,19 @@ public class PrevisaoService {
     return listaPrevisoes;
   }
 
-  public List<Previsao> obterPrevisoesWeatherMap(
-      String url,
-      String appid,
-      String cidade,
-      String units) throws Exception {
+  public List<Previsao> obterPrevisoesWeatherMap(String url, String appid, String cidade, String units)
+      throws Exception {
+
+    String[] cidade_s_ = cidade.split(" ");
+
+    for (int i = 0; i < cidade_s_.length; i++) {
+      if (i == 0) {
+        cidade = cidade_s_[i];
+      } else {
+        cidade = cidade + "%20" + cidade_s_[i];
+      }
+    }
+
     url = String.format("%s?q=%s&appid=%s&units=%s",
         url,
         cidade,
@@ -88,7 +96,12 @@ public class PrevisaoService {
       double temp_max = main.getDouble("temp_max");
       String dt_txt = previsaoJSON.getString("dt_txt");
 
-      Previsao p = new Previsao(temp_min, temp_max, cidade, dt_txt);
+      // buscando cidade
+      JSONObject city = raiz.getJSONObject("city");
+      String cidade_previsao = city.getString("name");
+
+      
+      Previsao p = new Previsao(temp_min, temp_max, cidade_previsao, dt_txt);
       System.out.println(p);
       listaPrevisoes.add(p);
     }
