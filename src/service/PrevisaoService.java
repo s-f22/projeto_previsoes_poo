@@ -100,7 +100,6 @@ public class PrevisaoService {
       JSONObject city = raiz.getJSONObject("city");
       String cidade_previsao = city.getString("name");
 
-      
       Previsao p = new Previsao(temp_min, temp_max, cidade_previsao, dt_txt);
       System.out.println(p);
       listaPrevisoes.add(p);

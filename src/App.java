@@ -29,14 +29,14 @@ public class App {
         final String opcao = JOptionPane.showInputDialog(
                 "O que quer fazer?\n[1] - Pesquisar previsão\n[2] - Historico de previsões\n[3] - Sair");
 
-        var cityName = "";
+        var nomeDaCidade = "";
         List<Previsao> resultadoOpenWeatherMAp = new ArrayList<>();
         List<HistoricoPrevisao> resultadoOracle = new ArrayList<>();
 
         switch (opcao) {
             case "1":
-                cityName = JOptionPane.showInputDialog(null, "Qual cidade quer pesquisar?", "PREVISOES", 3);
-                resultadoOpenWeatherMAp = service.obterPrevisoesWeatherMap(WEATHER_MAP_BASEURL, WEATHER_MAP_APPID, cityName,
+                nomeDaCidade = JOptionPane.showInputDialog(null, "Qual cidade quer pesquisar?", "PREVISOES", 3);
+                resultadoOpenWeatherMAp = service.obterPrevisoesWeatherMap(WEATHER_MAP_BASEURL, WEATHER_MAP_APPID, nomeDaCidade,
                         WEATHER_MAP_UNITS);
 
                 // *Inicio da Tabela JOptionPane Pesquisa*/
@@ -75,7 +75,7 @@ public class App {
                 dialogPesquisa.setVisible(true);
                 // *Fim da Tabela JOptionPane Pesquisa*/
 
-                Previsao p = new Previsao(cityName);
+                Previsao p = new Previsao(nomeDaCidade);
                 service.armazenarPrevisaoNoHistoricoOracleCloud(p, ORACLE_CLOUD_DATABASE);
                 break;
 
